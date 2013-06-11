@@ -22,6 +22,11 @@ if node['munin']['multi_environment_monitoring']
 else  
   munin_servers = search(:node, "role:#{node['munin']['server_role']} AND chef_environment:#{node.chef_environment}")
 end
+if munin_servers.empty?
+  Chef::Log.info("No nodes returned from search, using this node so munin-config configuration has current node's ip address")
+  munin_servers = Array.new
+  munin_servers << node
+end
 
 package "munin-node"
 
